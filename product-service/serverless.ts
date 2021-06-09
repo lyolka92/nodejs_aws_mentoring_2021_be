@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
-import getProduct from '@functions/getProduct';
+import getProductsById from '@functions/getProductsById';
+import getProducts from '@functions/getProducts';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -25,7 +26,7 @@ const serverlessConfiguration: AWS = {
     },
     lambdaHashingVersion: '20201221',
   },
-  functions: { getProduct },
+  functions: { getProductsById, getProducts },
 };
 
 module.exports = serverlessConfiguration;
