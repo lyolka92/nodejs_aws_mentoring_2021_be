@@ -1,16 +1,16 @@
 import "source-map-support/register";
 
-import { formatJSONResponse } from "@libs/apiGateway";
+import { formatJSONResponse, logRequest } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 import { ProductsDA } from "../../data-access/products.DA";
 
-export const getProducts = async () => {
-  const DA = new ProductsDA();
+export const getProducts = async (event) => {
+  logRequest(event);
 
   try {
-    const products = await DA.getAllProducts();
+    const products = await ProductsDA.getAllProducts();
     return formatJSONResponse({
-      ...products,
+      products,
     });
   } catch (err) {
     return formatJSONResponse(

@@ -1,6 +1,57 @@
 openapi: 3.0.0
 components:
   schemas:
+    AddProductRequest:
+      title: Add Product Schema
+      description: >-
+        This is a schema for responses in the JSON API format. For more, see
+        http://jsonapi.org
+      type: object
+      properties:
+        product:
+          type: object
+          properties:
+            title:
+              description: Product name
+              type: string
+            price:
+              description: Product item price
+              type: number
+            description:
+              description: Product description
+              type: string
+            src:
+              description: Product im
+              type: number
+        count:
+          description: Product quantity
+          type: number
+      default:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: Add Product Schema
+        description: >-
+          This is a schema for responses in the JSON API format. For more, see
+          http://jsonapi.org
+        type: object
+        properties:
+          product:
+            type: object
+            properties:
+              title:
+                description: Product name
+                type: string
+              price:
+                description: Product item price
+                type: number
+              description:
+                description: Product description
+                type: string
+              src:
+                description: Product im
+                type: number
+          count:
+            description: Product quantity
+            type: number
     error:
       type: object
       properties:
@@ -189,6 +240,49 @@ info:
   description: NodeJS in AWS mentoring product service API
   version: '1'
 paths:
+  /products:
+    post:
+      operationId: addProducts
+      summary: Add product
+      description: Adds product to DB and returns it
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProductRequest'
+        description: Product data and its amount
+      parameters: []
+      responses:
+        '200':
+          description: Added product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductResponse'
+        '500':
+          description: An error message when getting all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      operationId: getProducts
+      summary: Get products
+      description: Returns all available products
+      parameters: []
+      responses:
+        '200':
+          description: An array of all available products objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductsResponse'
+        '500':
+          description: An error message when getting all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   '/products/{id}':
     get:
       operationId: getProductsById
@@ -210,25 +304,6 @@ paths:
                 $ref: '#/components/schemas/GetProductResponse'
         '500':
           description: An error message when getting a product
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /products:
-    get:
-      operationId: getProducts
-      summary: Get products
-      description: Returns all available products
-      parameters: []
-      responses:
-        '200':
-          description: An array of all available products objects
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetProductsResponse'
-        '500':
-          description: An error message when getting all products
           content:
             application/json:
               schema:
