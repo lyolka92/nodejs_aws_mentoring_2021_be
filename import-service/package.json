@@ -13,10 +13,12 @@
   "dependencies": {
     "@middy/core": "^1.5.2",
     "@middy/http-json-body-parser": "^1.5.2",
+    "@types/winston": "^2.4.4",
     "aws-sdk": "^2.936.0",
     "csv-parser": "^3.0.0",
     "dotenv": "^10.0.0",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@serverless/typescript": "^2.23.0",
@@ -26,7 +28,7 @@
     "aws-sdk-mock": "^5.2.1",
     "jest": "^27.0.6",
     "json-schema-to-ts": "^1.5.0",
-    "serverless": "^2.50.0",
+    "serverless": "^2.52.0",
     "serverless-webpack": "^5.3.5",
     "ts-jest": "^27.0.3",
     "ts-loader": "^8.0.15",

@@ -1,14 +1,18 @@
+import { logger } from "@libs/logger";
+
 export const logRequest = (event): void => {
   const { httpMethod, resource, queryStringParameters, pathParameters, body } =
     event;
 
-  console.log(
-    httpMethod,
-    resource,
+  logger.info(
     JSON.stringify({
-      queryStringParameters,
-      pathParameters,
-      body,
+      httpMethod,
+      resource,
+      params: {
+        queryStringParameters,
+        pathParameters,
+        body,
+      },
     })
   );
 };

@@ -4,6 +4,7 @@ import type {
   Handler,
 } from "aws-lambda";
 import type { FromSchema } from "json-schema-to-ts";
+import { logger } from "@libs/logger";
 
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, "body"> & {
   body: FromSchema<S>;
@@ -18,13 +19,15 @@ export const logRequest = (event): void => {
   const { httpMethod, resource, queryStringParameters, pathParameters, body } =
     event;
 
-  console.log(
-    httpMethod,
-    resource,
+  logger.info(
     JSON.stringify({
-      queryStringParameters,
-      pathParameters,
-      body,
+      httpMethod,
+      resource,
+      params: {
+        queryStringParameters,
+        pathParameters,
+        body,
+      },
     })
   );
 };

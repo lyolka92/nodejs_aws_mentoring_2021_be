@@ -9,6 +9,7 @@ import { middyfy } from "@libs/lambda";
 
 import schema from "./schema";
 import { ProductsDA } from "../../data-access/products.DA";
+import { logger } from "@libs/logger";
 
 export const addProducts: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
   async (event) => {
@@ -19,11 +20,17 @@ export const addProducts: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
         event.body.product,
         event.body.amount
       );
+
+      logger.info(`Product ${product.title} is added to database`);
+
       return formatJSONResponse({
         ...product,
       });
     } catch (err) {
-      console.log(err);
+      logger.error(
+        `Error while adding product to database: ${JSON.stringify(err)}`
+      );
+
       return formatJSONResponse(
         {
           title: "POST /products error",

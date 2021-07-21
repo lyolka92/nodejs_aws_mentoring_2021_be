@@ -7,6 +7,7 @@ import * as GetProductSchema from "@models/GetProductSchema.json";
 import * as GetProductsSchema from "@models/GetProductsSchema.json";
 
 import addProducts from "@functions/addProducts";
+import catalogBatchProcess from "@functions/catalogBatchProcess";
 import getProductsById from "@functions/getProductsById";
 import getProducts from "@functions/getProducts";
 
@@ -71,7 +72,7 @@ const serverlessConfiguration: AWS = {
     },
     lambdaHashingVersion: "20201221",
   },
-  functions: { addProducts, getProductsById, getProducts },
+  functions: { addProducts, catalogBatchProcess, getProductsById, getProducts },
 };
 
 module.exports = serverlessConfiguration;
