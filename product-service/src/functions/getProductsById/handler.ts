@@ -9,7 +9,7 @@ import { logger } from "@libs/logger";
 
 export const getProductsById = async (event) => {
   logRequest(event);
-
+  const DA = new ProductsDA();
   const PRODUCT_ID = event.pathParameters.id;
 
   try {
@@ -20,7 +20,7 @@ export const getProductsById = async (event) => {
       );
     }
 
-    const product = await ProductsDA.getProductById(PRODUCT_ID);
+    const product = await DA.getProductById(PRODUCT_ID);
 
     logger.info(`Product ${PRODUCT_ID} is got from database`);
 

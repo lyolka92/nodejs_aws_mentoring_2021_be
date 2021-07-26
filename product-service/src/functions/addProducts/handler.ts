@@ -14,9 +14,10 @@ import { logger } from "@libs/logger";
 export const addProducts: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
   async (event) => {
     logRequest(event);
+    const DA = new ProductsDA();
 
     try {
-      const product = await ProductsDA.addProduct(
+      const product = await DA.addProduct(
         event.body.product,
         event.body.amount
       );

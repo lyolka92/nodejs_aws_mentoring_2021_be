@@ -2,6 +2,7 @@ import type { AWS } from "@serverless/typescript";
 
 import importProductsFile from "@functions/importProductsFile";
 import importFileParser from "@functions/importFileParser";
+
 import {
   BUCKET_ARN,
   BUCKET_NAME,

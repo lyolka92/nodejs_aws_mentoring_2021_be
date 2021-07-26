@@ -7,7 +7,7 @@ import csv from "csv-parser";
 import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 import { logger } from "@libs/logger";
-import { BUCKET_NAME, SQS_QUEUE_URL } from "../../../consts";
+import { BUCKET_NAME } from "../../../consts";
 
 dotenv.config();
 
@@ -51,7 +51,7 @@ const importFileParser = async (event: S3Event) => {
 
         await sqs.sendMessage(
           {
-            QueueUrl: SQS_QUEUE_URL,
+            QueueUrl: process.env.CREATE_PRODUCT_SQS_URL,
             MessageBody: JSON.stringify(product),
           },
           (err, data) => {

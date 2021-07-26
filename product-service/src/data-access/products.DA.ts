@@ -2,6 +2,7 @@ import { IProduct, TProductData } from "@models/IProduct";
 import { HTTPError } from "@models/HTTPError";
 import { Client, ClientConfig, QueryResult } from "pg";
 import dotenv from "dotenv";
+import { logger } from "@libs/logger";
 
 dotenv.config();
 
@@ -15,16 +16,20 @@ const dbOptions: ClientConfig = {
   connectionTimeoutMillis: 15000,
 };
 
-class ProductsDA {
-  private client: Client;
+export class ProductsDA {
+  private client: Client = null;
 
   private async connectToDB(): Promise<void> {
     this.client = new Client(dbOptions);
     await this.client.connect();
+    logger.info("Connected to database (client)");
   }
 
   private async closeDBConnection(): Promise<void> {
     await this.client.end();
+    this.client = null;
+
+    logger.info("Database connection is closed");
   }
 
   public async getProductById(id: string): Promise<IProduct> {
@@ -43,6 +48,7 @@ class ProductsDA {
         ProductsDA.throwNotFound();
       }
     } catch (err) {
+      logger.error(`Get product error: ${JSON.stringify(err)}`);
       throw err;
     } finally {
       await this.closeDBConnection();
@@ -67,7 +73,7 @@ class ProductsDA {
 
       return result.rows;
     } catch (err) {
-      console.log(err);
+      logger.error(`Get all products error: ${JSON.stringify(err)}`);
     } finally {
       await this.closeDBConnection();
     }
@@ -82,17 +88,17 @@ class ProductsDA {
     try {
       await this.client.query("BEGIN");
       const addProductQuery = `
-         INSERT INTO products
-         (TITLE, PRICE, SRC, DESCRIPTION)
-         VALUES
-         ('${productData.title}', '${productData.price}', '${productData.src}', '${productData.description}')
-         RETURNING id, title, price, src, description;`;
+        INSERT INTO products
+        (TITLE, PRICE, SRC, DESCRIPTION)
+        VALUES
+        ('${productData.title}', '${productData.price}', '${productData.src}', '${productData.description}')
+        RETURNING id, title, price, src, description;`;
       const addProductQueryResult = await this.client.query(addProductQuery);
       const {
         rows: [createdProduct],
       } = addProductQueryResult;
 
-      console.log(`Product is created: ${JSON.stringify(createdProduct)}`);
+      logger.info(`Product is created: ${JSON.stringify(createdProduct)}`);
 
       const addStocksQuery = `
          INSERT INTO stocks
@@ -101,11 +107,11 @@ class ProductsDA {
          ('${createdProduct.id}', '${amount}')`;
       await this.client.query(addStocksQuery);
 
-      console.log("Stock is added");
+      logger.info("Stock is added");
 
       await this.client.query("COMMIT");
 
-      console.log("Data is committed to database");
+      logger.info("Data is committed to database");
 
       return {
         ...createdProduct,
@@ -113,13 +119,9 @@ class ProductsDA {
       };
     } catch (err) {
       await this.client.query("ROLLBACK");
-      console.log(`Create product error: ${JSON.stringify(err)}`);
+      logger.error(`Create product error: ${JSON.stringify(err)}`);
     } finally {
       await this.closeDBConnection();
     }
   }
 }
-
-const ProductsDAInstance = new ProductsDA();
-
-export { ProductsDAInstance as ProductsDA };
