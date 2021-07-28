@@ -4,7 +4,6 @@ import { S3Event } from "aws-lambda/trigger/s3";
 import * as AWS from "aws-sdk";
 import dotenv from "dotenv";
 import csv from "csv-parser";
-import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 import { logger } from "@libs/logger";
 import { BUCKET_NAME } from "../../../consts";
