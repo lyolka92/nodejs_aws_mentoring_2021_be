@@ -1,19 +1,12 @@
 import { IProduct, TProductData } from "@models/IProduct";
 import { HTTPError } from "@models/HTTPError";
-import {
-  Client,
-  ClientConfig,
-  Pool,
-  PoolClient,
-  PoolConfig,
-  QueryResult,
-} from "pg";
+import { Client, ClientConfig, QueryResult } from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const { PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
-const dbOptions: ClientConfig | PoolConfig = {
+const dbOptions: ClientConfig = {
   host: PG_HOST,
   port: Number(PG_PORT),
   database: PG_DATABASE,
@@ -23,30 +16,19 @@ const dbOptions: ClientConfig | PoolConfig = {
 };
 
 class ProductsDA {
-  private pool: Pool;
-  private client: Client | PoolClient;
+  private client: Client;
 
-  private async connectToDBWithClient(): Promise<void> {
+  private async connectToDB(): Promise<void> {
     this.client = new Client(dbOptions);
     await this.client.connect();
   }
 
-  private async connectToDBWithPool(): Promise<void> {
-    this.pool = new Pool(dbOptions);
-    this.client = await this.pool.connect();
-  }
-
   private async closeDBConnection(): Promise<void> {
-    if (this.client instanceof Client) {
-      await this.client.end();
-    } else {
-      this.client.release();
-      await this.pool.end();
-    }
+    await this.client.end();
   }
 
   public async getProductById(id: string): Promise<IProduct> {
-    await this.connectToDBWithClient();
+    await this.connectToDB();
 
     try {
       const query = `
@@ -74,7 +56,7 @@ class ProductsDA {
   }
 
   public async getAllProducts(): Promise<IProduct[]> {
-    await this.connectToDBWithClient();
+    await this.connectToDB();
 
     try {
       const query = `
@@ -95,34 +77,43 @@ class ProductsDA {
     productData: TProductData,
     amount: number
   ): Promise<IProduct> {
-    await this.connectToDBWithPool();
+    await this.connectToDB();
 
     try {
       await this.client.query("BEGIN");
       const addProductQuery = `
-        INSERT INTO products
-        (TITLE, PRICE, SRC, DESCRIPTION)
-        VALUES
-        ('${productData.title}', '${productData.price}', '${productData.src}', '${productData.description}')
-        RETURNING id;`;
+         INSERT INTO products
+         (TITLE, PRICE, SRC, DESCRIPTION)
+         VALUES
+         ('${productData.title}', '${productData.price}', '${productData.src}', '${productData.description}')
+         RETURNING id, title, price, src, description;`;
       const addProductQueryResult = await this.client.query(addProductQuery);
       const {
         rows: [createdProduct],
       } = addProductQueryResult;
 
+      console.log(`Product is created: ${JSON.stringify(createdProduct)}`);
+
       const addStocksQuery = `
-        INSERT INTO stocks
-        (PRODUCT_ID, COUNT)
-        VALUES
-        ('${createdProduct.id}', '${amount}')`;
+         INSERT INTO stocks
+         (PRODUCT_ID, COUNT)
+         VALUES
+         ('${createdProduct.id}', '${amount}')`;
       await this.client.query(addStocksQuery);
+
+      console.log("Stock is added");
 
       await this.client.query("COMMIT");
 
-      return await this.getProductById(createdProduct.id);
+      console.log("Data is committed to database");
+
+      return {
+        ...createdProduct,
+        count: amount,
+      };
     } catch (err) {
       await this.client.query("ROLLBACK");
-      console.log(err);
+      console.log(`Create product error: ${JSON.stringify(err)}`);
     } finally {
       await this.closeDBConnection();
     }

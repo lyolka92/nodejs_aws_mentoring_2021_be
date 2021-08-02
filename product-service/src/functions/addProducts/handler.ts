@@ -23,6 +23,7 @@ export const addProducts: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
         ...product,
       });
     } catch (err) {
+      console.log(err);
       return formatJSONResponse(
         {
           title: "POST /products error",
