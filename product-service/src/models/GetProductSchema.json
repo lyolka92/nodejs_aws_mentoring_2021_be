@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Get Product Schema",
+  "description": "This is a schema for responses in the JSON API format. For more, see http://jsonapi.org",
+  "type": "object",
+  "properties": {
+	"id": {
+	  "description": "The unique product id",
+	  "type": "string"
+	},
+	"title": {
+	  "description": "Product name",
+	  "type": "string"
+	},
+	"price": {
+	  "description": "Product item price",
+	  "type": "number"
+	},
+	"description": {
+	  "description": "Product description",
+	  "type": "string"
+	},
+	"count": {
+	  "description": "Product quantity",
+	  "type": "number"
+	},
+	"src": {
+	  "description": "Product im",
+	  "type": "number"
+	}
+  },
+  "additionalProperties": false
+}

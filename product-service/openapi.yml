@@ -1,0 +1,235 @@
+openapi: 3.0.0
+components:
+  schemas:
+    error:
+      type: object
+      properties:
+        title:
+          description: >-
+            A short, human-readable summary of the problem. It **SHOULD NOT**
+            change from occurrence to occurrence of the problem, except for
+            purposes of localization.
+          type: string
+        detail:
+          description: >-
+            A human-readable explanation specific to this occurrence of the
+            problem.
+          type: string
+      additionalProperties: false
+    ErrorResponse:
+      title: Error Response Schema
+      description: >-
+        This is a schema for responses in the JSON API format. For more, see
+        http://jsonapi.org
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+          uniqueItems: true
+      additionalProperties: false
+      default:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: Error Response Schema
+        description: >-
+          This is a schema for responses in the JSON API format. For more, see
+          http://jsonapi.org
+        type: object
+        required:
+          - errors
+        properties:
+          errors:
+            type: array
+            items:
+              $ref: '#/components/schemas/error'
+            uniqueItems: true
+        additionalProperties: false
+        definitions:
+          error:
+            type: object
+            properties:
+              title:
+                description: >-
+                  A short, human-readable summary of the problem. It **SHOULD
+                  NOT** change from occurrence to occurrence of the problem,
+                  except for purposes of localization.
+                type: string
+              detail:
+                description: >-
+                  A human-readable explanation specific to this occurrence of
+                  the problem.
+                type: string
+            additionalProperties: false
+    GetProductResponse:
+      title: Get Product Schema
+      description: >-
+        This is a schema for responses in the JSON API format. For more, see
+        http://jsonapi.org
+      type: object
+      properties:
+        id:
+          description: The unique product id
+          type: string
+        title:
+          description: Product name
+          type: string
+        price:
+          description: Product item price
+          type: number
+        description:
+          description: Product description
+          type: string
+        count:
+          description: Product quantity
+          type: number
+        src:
+          description: Product im
+          type: number
+      additionalProperties: false
+      default:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: Get Product Schema
+        description: >-
+          This is a schema for responses in the JSON API format. For more, see
+          http://jsonapi.org
+        type: object
+        properties:
+          id:
+            description: The unique product id
+            type: string
+          title:
+            description: Product name
+            type: string
+          price:
+            description: Product item price
+            type: number
+          description:
+            description: Product description
+            type: string
+          count:
+            description: Product quantity
+            type: number
+          src:
+            description: Product im
+            type: number
+        additionalProperties: false
+    product:
+      type: object
+      properties:
+        id:
+          description: The unique product id
+          type: string
+        title:
+          description: Product name
+          type: string
+        price:
+          description: Product item price
+          type: number
+        description:
+          description: Product description
+          type: string
+        count:
+          description: Product quantity
+          type: number
+        src:
+          description: Product im
+          type: number
+    GetProductsResponse:
+      title: Get Products Schema
+      description: >-
+        This is a schema for responses in the JSON API format. For more, see
+        http://jsonapi.org
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/product'
+      additionalProperties: false
+      default:
+        $schema: 'http://json-schema.org/draft-04/schema#'
+        title: Get Products Schema
+        description: >-
+          This is a schema for responses in the JSON API format. For more, see
+          http://jsonapi.org
+        type: object
+        properties:
+          products:
+            type: array
+            items:
+              $ref: '#/components/schemas/product'
+        definitions:
+          product:
+            type: object
+            properties:
+              id:
+                description: The unique product id
+                type: string
+              title:
+                description: Product name
+                type: string
+              price:
+                description: Product item price
+                type: number
+              description:
+                description: Product description
+                type: string
+              count:
+                description: Product quantity
+                type: number
+              src:
+                description: Product im
+                type: number
+        additionalProperties: false
+info:
+  title: Product service API
+  description: NodeJS in AWS mentoring product service API
+  version: '1'
+paths:
+  '/products/{id}':
+    get:
+      operationId: getProductsById
+      summary: Get products
+      description: Returns single product by it's id
+      parameters:
+        - name: id
+          in: path
+          description: Unique product's id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: An object with the found product data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductResponse'
+        '500':
+          description: An error message when getting a product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /products:
+    get:
+      operationId: getProducts
+      summary: Get products
+      description: Returns all available products
+      parameters: []
+      responses:
+        '200':
+          description: An array of all available products objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductsResponse'
+        '500':
+          description: An error message when getting all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
