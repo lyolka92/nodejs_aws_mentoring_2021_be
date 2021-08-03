@@ -1,5 +1,9 @@
 --create tables
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+DROP TABLE IF EXISTS stocks;
+DROP TABLE IF EXISTS products;
+
 CREATE TABLE products (
     ID uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     TITLE text NOT NULL,
@@ -31,10 +35,10 @@ VALUES
 INSERT INTO stocks
 	(PRODUCT_ID, COUNT)
 VALUES
-	('8752f19a-0ab3-4114-bba7-5627e19d2f16', 120),
-	('849befbf-2cb8-4a52-8cea-73d9a39d50bc', 100),
-	('c1447555-925e-4673-85d3-cfc857390570', 100),
-	('223f9b15-418a-4079-822c-24991f03f593', 100),
-	('d1e7ef42-4b4c-4873-b680-82cc45b6ebac', 100),
-	('9f760023-5fc2-459d-b0c2-418226597360', 100),
-	('1ab76251-8e63-47fc-83b4-55ed40b72588', 100)
+	('96080b6f-7113-44b0-9caf-7985ba28c218', 120),
+	('3fbdc92a-d1bd-4643-ae44-cb2fda6ecc1f', 100),
+	('47b7eec0-cadf-461f-89a2-7cd364f65799', 100),
+	('37b5f826-2c27-4625-8d9b-577358d40d2d', 100),
+	('80471ded-e3f2-4acd-98e2-60afc626b881', 100),
+	('e5475a3f-49ad-46f7-8c8f-371bbf7cc355', 100),
+	('d27fa921-2e0f-4d7d-bf8f-8589a671d7de', 100)
