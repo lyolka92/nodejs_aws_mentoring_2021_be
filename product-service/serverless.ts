@@ -1,11 +1,16 @@
 import type { AWS } from "@serverless/typescript";
+import dotenv from "dotenv";
 
+import * as AddProductSchema from "@models/AddProductSchema.json";
 import * as ErrorResponseSchema from "@models/ErrorResponseSchema.json";
 import * as GetProductSchema from "@models/GetProductSchema.json";
 import * as GetProductsSchema from "@models/GetProductsSchema.json";
 
+import addProducts from "@functions/addProducts";
 import getProductsById from "@functions/getProductsById";
 import getProducts from "@functions/getProducts";
+
+dotenv.config();
 
 const serverlessConfiguration: AWS = {
   service: "product-service",
@@ -16,6 +21,12 @@ const serverlessConfiguration: AWS = {
       title: "Product service API",
       description: "NodeJS in AWS mentoring product service API",
       models: [
+        {
+          name: "AddProductRequest",
+          description: "Add new product to DB request",
+          contentType: "application/json",
+          schema: AddProductSchema,
+        },
         {
           name: "ErrorResponse",
           description: "An error response",
@@ -52,10 +63,15 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+      PG_HOST: process.env.PG_HOST,
+      PG_PORT: process.env.PG_PORT,
+      PG_DATABASE: process.env.PG_DATABASE,
+      PG_USERNAME: process.env.PG_USERNAME,
+      PG_PASSWORD: process.env.PG_PASSWORD,
     },
     lambdaHashingVersion: "20201221",
   },
-  functions: { getProductsById, getProducts },
+  functions: { addProducts, getProductsById, getProducts },
 };
 
 module.exports = serverlessConfiguration;

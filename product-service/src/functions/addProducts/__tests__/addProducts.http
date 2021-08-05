@@ -1,0 +1,12 @@
+POST https://78x9p2bww6.execute-api.eu-west-1.amazonaws.com/dev/products
+Content-Type: application/json
+
+{
+  "product": {
+	"title": "Secret",
+    "description": "Test product",
+    "price": 1000000,
+    "src": "https://www.divingcenter.ru/upload/iblock/34c/6012-010.jpg"
+  },
+  "amount": 1
+}

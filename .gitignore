@@ -3,3 +3,4 @@
 */.webpack/
 /.idea
 */coverage/
+*/.env
