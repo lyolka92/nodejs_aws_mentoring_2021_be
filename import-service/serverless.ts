@@ -2,8 +2,7 @@ import type { AWS } from "@serverless/typescript";
 
 import importProductsFile from "@functions/importProductsFile";
 import importFileParser from "@functions/importFileParser";
-
-const BUCKET = "stone-shop-import-service";
+import { BUCKET_ARN, BUCKET_NAME } from "./consts";
 
 const serverlessConfiguration: AWS = {
   service: "import-service",
@@ -33,14 +32,54 @@ const serverlessConfiguration: AWS = {
           {
             Effect: "Allow",
             Action: "s3:ListBucket",
-            Resource: [`arn:aws:s3:::${BUCKET}`],
+            Resource: [BUCKET_ARN],
           },
           {
             Effect: "Allow",
             Action: "s3:*",
-            Resource: [`arn:aws:s3:::${BUCKET}/*`],
+            Resource: [`${BUCKET_ARN}/*`],
           },
         ],
+      },
+    },
+  },
+  resources: {
+    Resources: {
+      WebAppS3Bucket: {
+        Type: "AWS::S3::Bucket",
+        Properties: {
+          BucketName: BUCKET_NAME,
+          AccessControl: "PublicRead",
+          CorsConfiguration: {
+            CorsRules: [
+              {
+                AllowedMethods: ["GET", "PUT"],
+                AllowedOrigins: ["*"],
+                AllowedHeaders: ["*"],
+                ExposedHeaders: [],
+              },
+            ],
+          },
+        },
+      },
+      WebAppS3BucketPolicy: {
+        Type: "AWS::S3::BucketPolicy",
+        Properties: {
+          Bucket: {
+            Ref: "WebAppS3Bucket",
+          },
+          PolicyDocument: {
+            Statement: [
+              {
+                Sid: "AllowPublicRead",
+                Effect: "Allow",
+                Principal: { AWS: "*" },
+                Action: "s3:GetObject",
+                Resource: `${BUCKET_ARN}/*`,
+              },
+            ],
+          },
+        },
       },
     },
   },
