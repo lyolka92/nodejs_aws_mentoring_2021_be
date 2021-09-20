@@ -7,8 +7,11 @@ import * as GetProductSchema from "@models/GetProductSchema.json";
 import * as GetProductsSchema from "@models/GetProductsSchema.json";
 
 import addProducts from "@functions/addProducts";
+import catalogBatchProcess from "@functions/catalogBatchProcess";
 import getProductsById from "@functions/getProductsById";
 import getProducts from "@functions/getProducts";
+
+import { SNS_TOPIC_LOCAL_NAME, SNS_TOPIC_NAME } from "./consts";
 
 dotenv.config();
 
@@ -68,10 +71,60 @@ const serverlessConfiguration: AWS = {
       PG_DATABASE: process.env.PG_DATABASE,
       PG_USERNAME: process.env.PG_USERNAME,
       PG_PASSWORD: process.env.PG_PASSWORD,
+      CREATE_PRODUCT_SNS_ARN: {
+        Ref: SNS_TOPIC_LOCAL_NAME,
+      },
     },
     lambdaHashingVersion: "20201221",
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: "Allow",
+            Action: "sns:*",
+            Resource: { Ref: SNS_TOPIC_LOCAL_NAME },
+          },
+        ],
+      },
+    },
   },
-  functions: { addProducts, getProductsById, getProducts },
+  resources: {
+    Resources: {
+      [SNS_TOPIC_LOCAL_NAME]: {
+        Type: "AWS::SNS::Topic",
+        Properties: {
+          TopicName: SNS_TOPIC_NAME,
+        },
+      },
+      SNSSubscriptionExpensiveProducts: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "oserova-dev@yandex.ru",
+          Protocol: "email",
+          TopicArn: {
+            Ref: SNS_TOPIC_LOCAL_NAME,
+          },
+          FilterPolicy: {
+            isExpensive: ["true"],
+          },
+        },
+      },
+      SNSSubscriptionCheapProducts: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "oserovao@ya.ru",
+          Protocol: "email",
+          TopicArn: {
+            Ref: SNS_TOPIC_LOCAL_NAME,
+          },
+          FilterPolicy: {
+            isExpensive: ["false"],
+          },
+        },
+      },
+    },
+  },
+  functions: { addProducts, catalogBatchProcess, getProductsById, getProducts },
 };
 
 module.exports = serverlessConfiguration;
