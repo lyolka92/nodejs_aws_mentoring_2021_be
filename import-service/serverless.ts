@@ -78,28 +78,6 @@ const serverlessConfiguration: AWS = {
                 ExposedHeaders: [],
               },
             ],
-            Resource: [`${BUCKET_ARN}/*`],
-          },
-        ],
-      },
-    },
-  },
-  resources: {
-    Resources: {
-      WebAppS3Bucket: {
-        Type: "AWS::S3::Bucket",
-        Properties: {
-          BucketName: BUCKET_NAME,
-          AccessControl: "PublicRead",
-          CorsConfiguration: {
-            CorsRules: [
-              {
-                AllowedMethods: ["GET", "PUT"],
-                AllowedOrigins: ["*"],
-                AllowedHeaders: ["*"],
-                ExposedHeaders: [],
-              },
-            ],
           },
         },
       },
@@ -126,6 +104,32 @@ const serverlessConfiguration: AWS = {
         Type: "AWS::SQS::Queue",
         Properties: {
           QueueName: SQS_QUEUE_NAME,
+        },
+      },
+      GatewayResponseDefault4XX: {
+        Type: "AWS::ApiGateway::GatewayResponse",
+        Properties: {
+          ResponseParameters: {
+            "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+            "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+          },
+          ResponseType: "DEFAULT_4XX",
+          RestApiId: {
+            Ref: "ApiGatewayRestApi",
+          },
+        },
+      },
+      GatewayResponseDefault5XX: {
+        Type: "AWS::ApiGateway::GatewayResponse",
+        Properties: {
+          ResponseParameters: {
+            "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+            "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+          },
+          ResponseType: "DEFAULT_5XX",
+          RestApiId: {
+            Ref: "ApiGatewayRestApi",
+          },
         },
       },
     },
