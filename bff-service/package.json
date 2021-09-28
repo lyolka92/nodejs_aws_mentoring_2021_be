@@ -1,0 +1,17 @@
+{
+  "name": "bff-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "deploy": "eb deploy lyolka92-bff-api-dev"
+  },
+  "author": "Olga Serova",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "express": "^4.17.1"
+  }
+}
